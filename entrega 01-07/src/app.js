@@ -1,13 +1,13 @@
 import express from "express";
 import handlebars from "express-handlebars";
-import __dirname from "./utils.js";
+import __dirname from "../utils.js";
 import { productManagerRouter } from "./routes/products.router.js";
-import { ProductManagerMongo } from "./dao/services/productManagerMongo.js";
-import { MsgModel } from "./dao/models/msgs.model.js";
+import { ProductManagerMongo } from "./services/productManagerMongo.js";
+import { MsgModel } from "./models/msgs.model.js";
 import { cartsRouter } from "./routes/carts.router.js";
 import { viewsRouter } from "./routes/views.router.js";
 import { Server } from "socket.io";
-import { connectMongo } from "./utils.js";
+import { connectMongo } from "../utils.js";
 import { loginRouter } from "./routes/login.router.js";
 import cookieParser from "cookie-parser";
 import session from "express-session";
