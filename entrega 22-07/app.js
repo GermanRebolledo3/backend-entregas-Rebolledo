@@ -1,17 +1,19 @@
 import express from "express";
 import handlebars from "express-handlebars";
-import __dirname from "../utils.js";
+import __dirname from "./utils.js";
 import { productManagerRouter } from "./routes/products.router.js";
-import { ProductManagerMongo } from "./services/productManagerMongo.js";
-import { MsgModel } from "./models/msgs.model.js";
-import { cartsRouter } from "./routes/cartsRouter.js";
+import { ProductManagerMongo } from "./dao/services/productManagerMongo.js";
+import { MsgModel } from "./dao/models/msgs.model.js";
+import { cartsRouter } from "./routes/carts.router.js";
 import { viewsRouter } from "./routes/views.router.js";
 import { Server } from "socket.io";
-import { connectMongo } from "../utils.js";
+import { connectMongo } from "./utils.js";
 import { loginRouter } from "./routes/login.router.js";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import MongoStore from "connect-mongo";
+import { initializePassport } from "./config/passport.config.js";
+import passport from "passport";
 
 const app = express();
 app.use(cookieParser());
@@ -69,11 +71,23 @@ socketServer.on("connection", async (socket) => {
   });
 });
 
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use("/api/products", productManagerRouter);
 
 app.use("/api/carts", cartsRouter);
 
 app.use("/api/sessions", loginRouter);
+
+app.use("/api/sessions/current", (req, res) => {
+  return res.status(200).json({
+    status: "success",
+    msg: "User data session",
+    payload: req.session.user || {},
+  });
+});
 
 app.get("*", (req, res) => {
   res.status(404).send({ status: "error", data: "Page not found" });
